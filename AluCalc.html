@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<HTML lang="en">
+
+  <HEAD>
+  
+    <META charset="UTF-8">
+    <!-- <META name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    
+    <!-- <LINK rel="stylesheet" href="style.css"> -->
+    
+    <TITLE>ALU calc</TITLE>
+    
+    <STYLE>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 10px 6px 2px 6px;
+        background-color: FloralWhite; /*Ivory AntiqueWhite*/
+      }
+      
+      .keys_grid{
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 5 keys in a row, each 1 fractional part */
+      }
+
+      .mkey, .skey {
+        display: grid;
+        margin-left: 6px;
+        margin-right: 6px;
+        place-items: center;
+      }
+      
+      .mkey {
+        margin-top: 0px;
+        margin-bottom: 4px;
+        padding: 4px;
+        background-color: dimgrey;
+        color: white;
+        font-weight: 600;
+        font-size: 24px;
+        border: 2px solid black;
+        border-radius: 10px;
+      }
+      
+      .skey {
+        margin-top: 4px;
+        margin-bottom: 0px;
+        padding: 0px;
+        color: darkorange;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      
+      .mkey.shift {
+        background-color: darkorange;
+        border: 2px solid chocolate;
+      }    
+
+      .mkey.del, .mkey.clr{
+        background-color: red;
+        border: 2px solid firebrick;
+      }    
+
+      .display, .lflags, .cflags, .rflags {
+        display: grid;
+        background-color: gainsboro;
+        color: dimgrey;
+        font-family: "Lucida Console", "Courier New", monospace;
+      }
+      
+      .display {
+        grid-column-start: 1;
+        grid-column-end: 6;
+        place-items: end;
+        margin: 0px 6px 8px 6px;
+
+        padding: 10px 4px 6px 4px;
+        font-weight: 600;
+        font-size: 32px;
+
+        border-left: 2px solid black;
+        border-right: 2px solid black;
+        border-bottom: 2px solid black;
+      }
+      
+      .lflags, .cflags, .rflags {
+        place-items: center;
+        margin-top: 4px 0px 0px 0px;
+
+        padding: 3px;
+        font-weight: 600;
+        font-size: 12px;
+
+        border-top: 2px solid black;
+      }
+      
+      .lflags {
+        margin-left: 6px;
+        border-left: 2px solid black;
+      }
+
+      .rflags {
+        margin-right: 6px;
+        border-right: 2px solid black;
+      }
+    </STYLE>
+    
+    <SCRIPT>
+      function hit(label) {
+        var elem = document.getElementById('flag_op');
+        elem.innerHTML = label
+      }
+      
+      function hotkeyhandler(event) {
+        if( event.key=='0' ) hit('0');
+        if( event.key=='1' ) hit('1');
+        if( event.key=='2' ) hit('2');
+        if( event.key=='3' ) hit('3');
+        if( event.key=='4' ) hit('4');
+        if( event.key=='5' ) hit('5');
+        if( event.key=='6' ) hit('6');
+        if( event.key=='7' ) hit('7');
+        if( event.key=='8' ) hit('8');
+        if( event.key=='9' ) hit('9');
+        if( event.key=='a' ) hit('A');
+        if( event.key=='b' ) hit('B');
+        if( event.key=='c' ) hit('C');
+        if( event.key=='d' ) hit('D');
+        if( event.key=='e' ) hit('E');
+        if( event.key=='f' ) hit('F');
+        
+        if( event.key=='Shift' ) hit('SHIFT');
+        if( event.key=='Backspace' ) hit('DEL');
+        if( event.key=='Escape' ) hit('CLR');
+        if( event.key=='Enter' ) hit('=');
+        return true; // 'false' means consumed
+      }
+
+      function main() {
+        document.getElementsByTagName("body")[0].onkeydown = hotkeyhandler;
+      }
+      
+      window.onload = main; 
+    </SCRIPT>  
+
+  </HEAD>
+  
+  <BODY>
+
+    <DIV class="keys_grid">
+
+      <DIV class="lflags" id="flag_shift">SHIFT LOCK</DIV>
+      <DIV class="cflags" id="flag_op">op</DIV>
+      <DIV class="cflags" id="flag_width">8 bit</DIV>
+      <DIV class="cflags" id="flag_mems">M ABCDEF</DIV>
+      <DIV class="rflags" id="flag_cpuflags">O C Z N P</DIV>
+
+
+      <DIV class="display">FFFF 1893</DIV>
+
+
+      <DIV class="skey shift">lock</DIV>
+      <DIV class="skey">MS#</DIV>
+      <DIV class="skey">MR#</DIV>
+      <DIV class="skey del" >undel</DIV>
+      <DIV class="skey clr">AC</DIV>
+      
+      <DIV class="mkey shift" onclick="hit('SHIFT')">SHIFT</DIV>
+      <DIV class="mkey" onclick="hit('MS')">MS</DIV>
+      <DIV class="mkey" onclick="hit('MR')">MR</DIV>
+      <DIV class="mkey del" onclick="hit('DEL')">DEL</DIV>
+      <DIV class="mkey clr"  onclick="hit('CLR')">C</DIV>
+
+      
+      <DIV class="skey"></DIV>
+      <DIV class="skey"></DIV>
+      <DIV class="skey"></DIV>
+      <DIV class="skey">±&gt;&gt;#</DIV>
+      <DIV class="skey">NXOR</DIV>
+      
+      <DIV class="mkey" onclick="hit('D')">D</DIV>
+      <DIV class="mkey" onclick="hit('E')">E</DIV>
+      <DIV class="mkey" onclick="hit('F')">F</DIV>
+      <DIV class="mkey" onclick="hit('ASL')">±&gt;&gt;</DIV>
+      <DIV class="mkey" onclick="hit('XOR')">XOR</DIV>
+
+      
+      <DIV class="skey">&#x21AA;C</DIV> <!-- right arrow with Hook -->
+      <DIV class="skey">&#x21AA;#</DIV>
+      <DIV class="skey">&#x21AA;</DIV>
+      <DIV class="skey">&gt;&gt;#</DIV>
+      <DIV class="skey">NOR</DIV>
+
+      <DIV class="mkey" onclick="hit('A')">A</DIV>
+      <DIV class="mkey" onclick="hit('B')">B</DIV>
+      <DIV class="mkey" onclick="hit('C')">C</DIV>
+      <DIV class="mkey" onclick="hit('LSL')">&gt;&gt;</DIV>
+      <DIV class="mkey" onclick="hit('OR')">OR</DIV>
+
+
+      <DIV class="skey">&#x21A9;C</DIV> <!-- left arrow with Hook -->
+      <DIV class="skey">&#x21A9;#</DIV>
+      <DIV class="skey">&#x21A9;</DIV>
+      <DIV class="skey">&lt;&lt;#</DIV>
+      <DIV class="skey">NAND</DIV>
+
+      <DIV class="mkey" onclick="hit('7')">7</DIV>
+      <DIV class="mkey" onclick="hit('8')">8</DIV>
+      <DIV class="mkey" onclick="hit('9')">9</DIV>
+      <DIV class="mkey" onclick="hit('LSR')">&lt;&lt;</DIV>
+      <DIV class="mkey" onclick="hit('AND')">AND</DIV>
+
+
+      <DIV class="skey"></DIV>
+      <DIV class="skey">NIMP</DIV>
+      <DIV class="skey">IMP</DIV>
+      <DIV class="skey">s×</DIV>
+      <DIV class="skey">s÷</DIV>
+
+      <DIV class="mkey" onclick="hit('4')">4</DIV>
+      <DIV class="mkey" onclick="hit('5')">5</DIV>
+      <DIV class="mkey" onclick="hit('6')">6</DIV>
+      <DIV class="mkey" onclick="hit('×')">×</DIV>
+      <DIV class="mkey" onclick="hit('÷')">÷</DIV>
+
+
+      <DIV class="skey"></DIV>
+      <DIV class="skey">INC</DIV>
+      <DIV class="skey">DEC</DIV>
+      <DIV class="skey">+C</DIV>
+      <DIV class="skey">−C</DIV>
+
+      <DIV class="mkey" onclick="hit('1')">1</DIV>
+      <DIV class="mkey" onclick="hit('2')">2</DIV>
+      <DIV class="mkey" onclick="hit('3')">3</DIV>
+      <DIV class="mkey" onclick="hit('+')">+</DIV>
+      <DIV class="mkey" onclick="hit('−')">−</DIV>
+      
+
+      <DIV class="skey">width</DIV>
+      <DIV class="skey">NOT</DIV>
+      <DIV class="skey">B&lt;&gt;H</DIV>
+      <DIV class="skey">SEC</DIV>
+      <DIV class="skey">anser</DIV>
+
+      <DIV class="mkey" onclick="hit('0')">0</DIV>
+      <DIV class="mkey" onclick="hit('±')">±</DIV>
+      <DIV class="mkey" onclick="hit('BHD')">B&gt;H&gt;D</DIV>
+      <DIV class="mkey" onclick="hit('CLC')">CLC</DIV>
+      <DIV class="mkey" onclick="hit('=')">=</DIV>
+    </DIV>
+
+  </BODY>
+</HTML>
