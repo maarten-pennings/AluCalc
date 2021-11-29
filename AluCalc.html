@@ -51,12 +51,12 @@
         font-size: 15px;
       }
       
-      .mkey.shift {
+      .shift {
         background-color: darkorange;
         border: 2px solid chocolate;
       }    
 
-      .mkey.del, .mkey.clr{
+      .del, .clr{
         background-color: red;
         border: 2px solid firebrick;
       }    
@@ -103,6 +103,15 @@
         margin-right: 6px;
         border-right: 2px solid black;
       }
+      
+      .mkey:hover {
+        background-color: darkgrey;      
+      }
+      
+      .mkey:active {
+        background-color: green;      
+      }
+      
     </STYLE>
     
     <SCRIPT>
@@ -159,17 +168,17 @@
       <DIV class="display">FFFF 1893</DIV>
 
 
-      <DIV class="skey shift">lock</DIV>
+      <DIV class="skey">lock</DIV>
       <DIV class="skey">MS#</DIV>
       <DIV class="skey">MR#</DIV>
-      <DIV class="skey del" >undel</DIV>
-      <DIV class="skey clr">AC</DIV>
+      <DIV class="skey" >undel</DIV>
+      <DIV class="skey">AC</DIV>
       
-      <DIV class="mkey shift" onclick="hit('SHIFT')">SHIFT</DIV>
-      <DIV class="mkey" onclick="hit('MS')">MS</DIV>
-      <DIV class="mkey" onclick="hit('MR')">MR</DIV>
-      <DIV class="mkey del" onclick="hit('DEL')">DEL</DIV>
-      <DIV class="mkey clr"  onclick="hit('CLR')">C</DIV>
+      <BUTTON class="mkey shift" onclick="hit('SHIFT')">SHIFT</BUTTON>
+      <BUTTON class="mkey" onclick="hit('MS')">MS</BUTTON>
+      <BUTTON class="mkey" onclick="hit('MR')">MR</BUTTON>
+      <BUTTON class="mkey del" onclick="hit('DEL')">DEL</BUTTON>
+      <BUTTON class="mkey clr"  onclick="hit('CLR')">C</BUTTON>
 
       
       <DIV class="skey"></DIV>
@@ -178,11 +187,11 @@
       <DIV class="skey">±&gt;&gt;#</DIV>
       <DIV class="skey">NXOR</DIV>
       
-      <DIV class="mkey" onclick="hit('D')">D</DIV>
-      <DIV class="mkey" onclick="hit('E')">E</DIV>
-      <DIV class="mkey" onclick="hit('F')">F</DIV>
-      <DIV class="mkey" onclick="hit('ASL')">±&gt;&gt;</DIV>
-      <DIV class="mkey" onclick="hit('XOR')">XOR</DIV>
+      <BUTTON class="mkey" onclick="hit('D')">D</BUTTON>
+      <BUTTON class="mkey" onclick="hit('E')">E</BUTTON>
+      <BUTTON class="mkey" onclick="hit('F')">F</BUTTON>
+      <BUTTON class="mkey" onclick="hit('ASL')">±&gt;&gt;</BUTTON>
+      <BUTTON class="mkey" onclick="hit('XOR')">XOR</BUTTON>
 
       
       <DIV class="skey">&#x21AA;C</DIV> <!-- right arrow with Hook -->
@@ -191,11 +200,11 @@
       <DIV class="skey">&gt;&gt;#</DIV>
       <DIV class="skey">NOR</DIV>
 
-      <DIV class="mkey" onclick="hit('A')">A</DIV>
-      <DIV class="mkey" onclick="hit('B')">B</DIV>
-      <DIV class="mkey" onclick="hit('C')">C</DIV>
-      <DIV class="mkey" onclick="hit('LSL')">&gt;&gt;</DIV>
-      <DIV class="mkey" onclick="hit('OR')">OR</DIV>
+      <BUTTON class="mkey" onclick="hit('A')">A</BUTTON>
+      <BUTTON class="mkey" onclick="hit('B')">B</BUTTON>
+      <BUTTON class="mkey" onclick="hit('C')">C</BUTTON>
+      <BUTTON class="mkey" onclick="hit('LSL')">&gt;&gt;</BUTTON>
+      <BUTTON class="mkey" onclick="hit('OR')">OR</BUTTON>
 
 
       <DIV class="skey">&#x21A9;C</DIV> <!-- left arrow with Hook -->
@@ -204,11 +213,11 @@
       <DIV class="skey">&lt;&lt;#</DIV>
       <DIV class="skey">NAND</DIV>
 
-      <DIV class="mkey" onclick="hit('7')">7</DIV>
-      <DIV class="mkey" onclick="hit('8')">8</DIV>
-      <DIV class="mkey" onclick="hit('9')">9</DIV>
-      <DIV class="mkey" onclick="hit('LSR')">&lt;&lt;</DIV>
-      <DIV class="mkey" onclick="hit('AND')">AND</DIV>
+      <BUTTON class="mkey" onclick="hit('7')">7</BUTTON>
+      <BUTTON class="mkey" onclick="hit('8')">8</BUTTON>
+      <BUTTON class="mkey" onclick="hit('9')">9</BUTTON>
+      <BUTTON class="mkey" onclick="hit('LSR')">&lt;&lt;</BUTTON>
+      <BUTTON class="mkey" onclick="hit('AND')">AND</BUTTON>
 
 
       <DIV class="skey"></DIV>
@@ -217,11 +226,11 @@
       <DIV class="skey">s×</DIV>
       <DIV class="skey">s÷</DIV>
 
-      <DIV class="mkey" onclick="hit('4')">4</DIV>
-      <DIV class="mkey" onclick="hit('5')">5</DIV>
-      <DIV class="mkey" onclick="hit('6')">6</DIV>
-      <DIV class="mkey" onclick="hit('×')">×</DIV>
-      <DIV class="mkey" onclick="hit('÷')">÷</DIV>
+      <BUTTON class="mkey" onclick="hit('4')">4</BUTTON>
+      <BUTTON class="mkey" onclick="hit('5')">5</BUTTON>
+      <BUTTON class="mkey" onclick="hit('6')">6</BUTTON>
+      <BUTTON class="mkey" onclick="hit('×')">×</BUTTON>
+      <BUTTON class="mkey" onclick="hit('÷')">÷</BUTTON>
 
 
       <DIV class="skey"></DIV>
@@ -230,11 +239,11 @@
       <DIV class="skey">+C</DIV>
       <DIV class="skey">−C</DIV>
 
-      <DIV class="mkey" onclick="hit('1')">1</DIV>
-      <DIV class="mkey" onclick="hit('2')">2</DIV>
-      <DIV class="mkey" onclick="hit('3')">3</DIV>
-      <DIV class="mkey" onclick="hit('+')">+</DIV>
-      <DIV class="mkey" onclick="hit('−')">−</DIV>
+      <BUTTON class="mkey" onclick="hit('1')">1</BUTTON>
+      <BUTTON class="mkey" onclick="hit('2')">2</BUTTON>
+      <BUTTON class="mkey" onclick="hit('3')">3</BUTTON>
+      <BUTTON class="mkey" onclick="hit('+')">+</BUTTON>
+      <BUTTON class="mkey" onclick="hit('−')">−</BUTTON>
       
 
       <DIV class="skey">width</DIV>
@@ -243,11 +252,11 @@
       <DIV class="skey">SEC</DIV>
       <DIV class="skey">anser</DIV>
 
-      <DIV class="mkey" onclick="hit('0')">0</DIV>
-      <DIV class="mkey" onclick="hit('±')">±</DIV>
-      <DIV class="mkey" onclick="hit('BHD')">B&gt;H&gt;D</DIV>
-      <DIV class="mkey" onclick="hit('CLC')">CLC</DIV>
-      <DIV class="mkey" onclick="hit('=')">=</DIV>
+      <BUTTON class="mkey" onclick="hit('0')">0</BUTTON>
+      <BUTTON class="mkey" onclick="hit('±')">±</BUTTON>
+      <BUTTON class="mkey" onclick="hit('BHD')">B&gt;H&gt;D</BUTTON>
+      <BUTTON class="mkey" onclick="hit('CLC')">CLC</BUTTON>
+      <BUTTON class="mkey" onclick="hit('=')">=</BUTTON>
     </DIV>
 
   </BODY>
