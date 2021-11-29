@@ -2,21 +2,21 @@
 <HTML lang="en">
 
   <HEAD>
-  
+
     <META charset="UTF-8">
     <!-- <META name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    
+
     <!-- <LINK rel="stylesheet" href="style.css"> -->
-    
+
     <TITLE>ALU calc</TITLE>
-    
+
     <STYLE>
       body {
         font-family: Arial, Helvetica, sans-serif;
         margin: 10px 6px 2px 6px;
         background-color: FloralWhite; /*Ivory AntiqueWhite*/
       }
-      
+
       .keys_grid{
         width: 100%;
         display: grid;
@@ -29,7 +29,7 @@
         margin-right: 6px;
         place-items: center;
       }
-      
+
       .mkey {
         margin-top: 0px;
         margin-bottom: 4px;
@@ -41,7 +41,9 @@
         border: 2px solid black;
         border-radius: 10px;
       }
-      
+      .mkey:hover { background-color: darkgrey; }
+      .mkey:active { background-color: green; }
+
       .skey {
         margin-top: 4px;
         margin-bottom: 0px;
@@ -50,16 +52,18 @@
         font-weight: 600;
         font-size: 15px;
       }
-      
+
       .shift {
         background-color: darkorange;
         border: 2px solid chocolate;
-      }    
+      }
+      .shift:hover { background-color: #FFB040; }
 
       .del, .clr{
         background-color: red;
         border: 2px solid firebrick;
-      }    
+      }
+      .del:hover, .clr:hover { background-color: #FF8080; }
 
       .display, .lflags, .cflags, .rflags {
         display: grid;
@@ -67,7 +71,7 @@
         color: dimgrey;
         font-family: "Lucida Console", "Courier New", monospace;
       }
-      
+
       .display {
         grid-column-start: 1;
         grid-column-end: 6;
@@ -82,7 +86,7 @@
         border-right: 2px solid black;
         border-bottom: 2px solid black;
       }
-      
+
       .lflags, .cflags, .rflags {
         place-items: center;
         margin-top: 4px 0px 0px 0px;
@@ -93,7 +97,7 @@
 
         border-top: 2px solid black;
       }
-      
+
       .lflags {
         margin-left: 6px;
         border-left: 2px solid black;
@@ -103,57 +107,57 @@
         margin-right: 6px;
         border-right: 2px solid black;
       }
-      
-      .mkey:hover {
-        background-color: darkgrey;      
-      }
-      
-      .mkey:active {
-        background-color: green;      
-      }
-      
+
     </STYLE>
-    
+
     <SCRIPT>
+      var help
+
       function hit(label) {
         var elem = document.getElementById('flag_op');
         elem.innerHTML = label
+        if( label=="key-dig1" ) {
+          var win = window.open("", "ALU calc help" );
+          win.document.body.innerHTML = help;
+        }
       }
-      
+
       function hotkeyhandler(event) {
-        if( event.key=='0' ) hit('0');
-        if( event.key=='1' ) hit('1');
-        if( event.key=='2' ) hit('2');
-        if( event.key=='3' ) hit('3');
-        if( event.key=='4' ) hit('4');
-        if( event.key=='5' ) hit('5');
-        if( event.key=='6' ) hit('6');
-        if( event.key=='7' ) hit('7');
-        if( event.key=='8' ) hit('8');
-        if( event.key=='9' ) hit('9');
-        if( event.key=='a' ) hit('A');
-        if( event.key=='b' ) hit('B');
-        if( event.key=='c' ) hit('C');
-        if( event.key=='d' ) hit('D');
-        if( event.key=='e' ) hit('E');
-        if( event.key=='f' ) hit('F');
-        
-        if( event.key=='Shift' ) hit('SHIFT');
-        if( event.key=='Backspace' ) hit('DEL');
-        if( event.key=='Escape' ) hit('CLR');
-        if( event.key=='Enter' ) hit('=');
+        var buttons = document.getElementsByTagName("button");
+        for( var ix=0; ix<buttons.length; ix++ ) {
+          const but = buttons[ix];
+          const but_id = but.getAttribute("_id");
+          const but_key = but.getAttribute("_key");
+          if( event.key==but_key ) { hit(but_id); return false; }
+        }
         return true; // 'false' means consumed
       }
 
       function main() {
         document.getElementsByTagName("body")[0].onkeydown = hotkeyhandler;
+        var buttons = document.getElementsByTagName("button");
+        help = "<TITLE>ALU calc HELP</TITLE><table>\n"
+        help += "  <tr><td><b>hotkey</b></td><td><b>action</b></td></tr>\n"
+        for( var ix=0; ix<buttons.length; ix++ ) {
+          const but = buttons[ix];
+          const but_id = but.getAttribute("_id");
+          const but_key = but.getAttribute("_key");
+          // Set the hotkey hint (title)
+          but.setAttribute("title", "Hotkey: "+but_key+" (for "+but_id+")" );
+          // Set the onclick
+          but.addEventListener("click", function(){hit(but_id)} );
+          // Extend help
+          help += "  <tr><td>"+but_key+"</td><td>"+but_id+"</td></tr>\n";
+        }
+        help += "</table>\n"
+        help += "<b>All hotkeys are unshifted</b>\n" 
       }
-      
-      window.onload = main; 
-    </SCRIPT>  
+
+      window.onload = main;
+    </SCRIPT>
 
   </HEAD>
-  
+
   <BODY>
 
     <DIV class="keys_grid">
@@ -164,99 +168,84 @@
       <DIV class="cflags" id="flag_mems">M ABCDEF</DIV>
       <DIV class="rflags" id="flag_cpuflags">O C Z N P</DIV>
 
-
       <DIV class="display">FFFF 1893</DIV>
-
 
       <DIV class="skey">lock</DIV>
       <DIV class="skey">MS#</DIV>
       <DIV class="skey">MR#</DIV>
       <DIV class="skey" >undel</DIV>
       <DIV class="skey">AC</DIV>
-      
-      <BUTTON class="mkey shift" onclick="hit('SHIFT')">SHIFT</BUTTON>
-      <BUTTON class="mkey" onclick="hit('MS')">MS</BUTTON>
-      <BUTTON class="mkey" onclick="hit('MR')">MR</BUTTON>
-      <BUTTON class="mkey del" onclick="hit('DEL')">DEL</BUTTON>
-      <BUTTON class="mkey clr"  onclick="hit('CLR')">C</BUTTON>
+      <BUTTON class="mkey shift" _key="z" _id="key-shift">SHIFT</BUTTON>
+      <BUTTON class="mkey" _key="s" _id="key-ms">MS</BUTTON>
+      <BUTTON class="mkey" _key="r" _id="key-mr">MR</BUTTON>
+      <BUTTON class="mkey del" _key="Backspace" _id="key-del">DEL</BUTTON>
+      <BUTTON class="mkey clr" _key="Escape"  _id="key-clr">C</BUTTON>
 
-      
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
       <DIV class="skey">±&gt;&gt;#</DIV>
       <DIV class="skey">NXOR</DIV>
-      
-      <BUTTON class="mkey" onclick="hit('D')">D</BUTTON>
-      <BUTTON class="mkey" onclick="hit('E')">E</BUTTON>
-      <BUTTON class="mkey" onclick="hit('F')">F</BUTTON>
-      <BUTTON class="mkey" onclick="hit('ASL')">±&gt;&gt;</BUTTON>
-      <BUTTON class="mkey" onclick="hit('XOR')">XOR</BUTTON>
+      <BUTTON class="mkey" _key="d" _id="key-digd">D</BUTTON>
+      <BUTTON class="mkey" _key="e" _id="key-dige">E</BUTTON>
+      <BUTTON class="mkey" _key="f" _id="key-digf">F</BUTTON>
+      <BUTTON class="mkey" _key=";" _id="key-asr">±&gt;&gt;</BUTTON>
+      <BUTTON class="mkey" _key="x" _id="key-xor">XOR</BUTTON>
 
-      
       <DIV class="skey">&#x21AA;C</DIV> <!-- right arrow with Hook -->
       <DIV class="skey">&#x21AA;#</DIV>
       <DIV class="skey">&#x21AA;</DIV>
       <DIV class="skey">&gt;&gt;#</DIV>
       <DIV class="skey">NOR</DIV>
-
-      <BUTTON class="mkey" onclick="hit('A')">A</BUTTON>
-      <BUTTON class="mkey" onclick="hit('B')">B</BUTTON>
-      <BUTTON class="mkey" onclick="hit('C')">C</BUTTON>
-      <BUTTON class="mkey" onclick="hit('LSL')">&gt;&gt;</BUTTON>
-      <BUTTON class="mkey" onclick="hit('OR')">OR</BUTTON>
-
+      <BUTTON class="mkey" _key="a" _id="key-diga">A</BUTTON>
+      <BUTTON class="mkey" _key="b" _id="key-digb">B</BUTTON>
+      <BUTTON class="mkey" _key="c" _id="key-digc">C</BUTTON>
+      <BUTTON class="mkey" _key="." _id="key-lsr">&gt;&gt;</BUTTON>
+      <BUTTON class="mkey" _key="o" _id="key-or">OR</BUTTON>
 
       <DIV class="skey">&#x21A9;C</DIV> <!-- left arrow with Hook -->
       <DIV class="skey">&#x21A9;#</DIV>
       <DIV class="skey">&#x21A9;</DIV>
       <DIV class="skey">&lt;&lt;#</DIV>
       <DIV class="skey">NAND</DIV>
-
-      <BUTTON class="mkey" onclick="hit('7')">7</BUTTON>
-      <BUTTON class="mkey" onclick="hit('8')">8</BUTTON>
-      <BUTTON class="mkey" onclick="hit('9')">9</BUTTON>
-      <BUTTON class="mkey" onclick="hit('LSR')">&lt;&lt;</BUTTON>
-      <BUTTON class="mkey" onclick="hit('AND')">AND</BUTTON>
-
+      <BUTTON class="mkey" _key="7" _id="key-dig7">7</BUTTON>
+      <BUTTON class="mkey" _key="8" _id="key-dig8">8</BUTTON>
+      <BUTTON class="mkey" _key="9" _id="key-dig9">9</BUTTON>
+      <BUTTON class="mkey" _key="," _id="key-lsl">&lt;&lt;</BUTTON>
+      <BUTTON class="mkey" _key="n" _id="key-and">AND</BUTTON>
 
       <DIV class="skey"></DIV>
       <DIV class="skey">NIMP</DIV>
       <DIV class="skey">IMP</DIV>
       <DIV class="skey">s×</DIV>
       <DIV class="skey">s÷</DIV>
+      <BUTTON class="mkey" _key="4" _id="key-dig4">4</BUTTON>
+      <BUTTON class="mkey" _key="5" _id="key-dig5">5</BUTTON>
+      <BUTTON class="mkey" _key="6" _id="key-dig6">6</BUTTON>
+      <BUTTON class="mkey" _key="\" _id="key-mul">×</BUTTON>
+      <BUTTON class="mkey" _key="/" _id="key-div">÷</BUTTON>
 
-      <BUTTON class="mkey" onclick="hit('4')">4</BUTTON>
-      <BUTTON class="mkey" onclick="hit('5')">5</BUTTON>
-      <BUTTON class="mkey" onclick="hit('6')">6</BUTTON>
-      <BUTTON class="mkey" onclick="hit('×')">×</BUTTON>
-      <BUTTON class="mkey" onclick="hit('÷')">÷</BUTTON>
-
-
-      <DIV class="skey"></DIV>
+      <DIV class="skey">help</DIV>
       <DIV class="skey">INC</DIV>
       <DIV class="skey">DEC</DIV>
       <DIV class="skey">+C</DIV>
       <DIV class="skey">−C</DIV>
-
-      <BUTTON class="mkey" onclick="hit('1')">1</BUTTON>
-      <BUTTON class="mkey" onclick="hit('2')">2</BUTTON>
-      <BUTTON class="mkey" onclick="hit('3')">3</BUTTON>
-      <BUTTON class="mkey" onclick="hit('+')">+</BUTTON>
-      <BUTTON class="mkey" onclick="hit('−')">−</BUTTON>
-      
+      <BUTTON class="mkey" _key="1" _id="key-dig1">1</BUTTON>
+      <BUTTON class="mkey" _key="2" _id="key-dig2">2</BUTTON>
+      <BUTTON class="mkey" _key="3" _id="key-dig3">3</BUTTON>
+      <BUTTON class="mkey" _key="=" _id="key-add">+</BUTTON>
+      <BUTTON class="mkey" _key="-" _id="key-sub">−</BUTTON>
 
       <DIV class="skey">width</DIV>
       <DIV class="skey">NOT</DIV>
       <DIV class="skey">B&lt;&gt;H</DIV>
       <DIV class="skey">SEC</DIV>
       <DIV class="skey">anser</DIV>
-
-      <BUTTON class="mkey" onclick="hit('0')">0</BUTTON>
-      <BUTTON class="mkey" onclick="hit('±')">±</BUTTON>
-      <BUTTON class="mkey" onclick="hit('BHD')">B&gt;H&gt;D</BUTTON>
-      <BUTTON class="mkey" onclick="hit('CLC')">CLC</BUTTON>
-      <BUTTON class="mkey" onclick="hit('=')">=</BUTTON>
+      <BUTTON class="mkey" _key="0" _id="key-dig0">0</BUTTON>
+      <BUTTON class="mkey" _key="`" _id="key-sign">±</BUTTON>
+      <BUTTON class="mkey" _key="m" _id="key-mode">B&gt;H&gt;D</BUTTON>
+      <BUTTON class="mkey" _key="y" _id="key-carry">CLC</BUTTON>
+      <BUTTON class="mkey" _key="Enter" _id="key-exec" >=</BUTTON>
     </DIV>
 
   </BODY>
