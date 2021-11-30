@@ -4,7 +4,7 @@
   <HEAD>
 
     <META charset="UTF-8">
-    <!-- <META name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <META name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- <LINK rel="stylesheet" href="style.css"> -->
 
@@ -116,7 +116,7 @@
       function hit(label) {
         var elem = document.getElementById('flag_op');
         elem.innerHTML = label
-        if( label=="key-dig1" ) {
+        if( label=="key-del" ) {
           var win = window.open("", "ALU calc help" );
           win.document.body.innerHTML = help;
         }
@@ -137,20 +137,22 @@
         document.getElementsByTagName("body")[0].onkeydown = hotkeyhandler;
         var buttons = document.getElementsByTagName("button");
         help = "<TITLE>ALU calc HELP</TITLE><table>\n"
-        help += "  <tr><td><b>hotkey</b></td><td><b>action</b></td></tr>\n"
+        help += "  <tr><td><b>hotkey</b></td><b>primary function</b></td><td><b>secondary function</b></td></tr>\n"
         for( var ix=0; ix<buttons.length; ix++ ) {
           const but = buttons[ix];
           const but_id = but.getAttribute("_id");
           const but_key = but.getAttribute("_key");
+          const but_helpm = but.getAttribute("_helpm");
+          const but_helps = but.getAttribute("_helps");
           // Set the hotkey hint (title)
-          but.setAttribute("title", "Hotkey: "+but_key+" (for "+but_id+")" );
+          but.setAttribute("title", "Hotkey: "+but_key+"\nPrimary function: "+but_helpm+"\nSecondary function: "+but_helps );
           // Set the onclick
           but.addEventListener("click", function(){hit(but_id)} );
           // Extend help
-          help += "  <tr><td>"+but_key+"</td><td>"+but_id+"</td></tr>\n";
+          help += "  <tr><td>"+but_key+"</td><td>"+but_helpm+"</td><td>"+but_helps+"</td></tr>\n";
         }
         help += "</table>\n"
-        help += "<b>All hotkeys are unshifted</b>\n" 
+        help += "<b>Note</b>: hotkeys are unshifted on PC keyboard</b>\n" 
       }
 
       window.onload = main;
@@ -173,79 +175,79 @@
       <DIV class="skey">lock</DIV>
       <DIV class="skey">MS#</DIV>
       <DIV class="skey">MR#</DIV>
-      <DIV class="skey" >undel</DIV>
+      <DIV class="skey" >help</DIV>
       <DIV class="skey">AC</DIV>
-      <BUTTON class="mkey shift" _key="z" _id="key-shift">SHIFT</BUTTON>
-      <BUTTON class="mkey" _key="s" _id="key-ms">MS</BUTTON>
-      <BUTTON class="mkey" _key="r" _id="key-mr">MR</BUTTON>
-      <BUTTON class="mkey del" _key="Backspace" _id="key-del">DEL</BUTTON>
-      <BUTTON class="mkey clr" _key="Escape"  _id="key-clr">C</BUTTON>
+      <BUTTON class="mkey shift" _key="z" _id="key-shift" _helpm="shift (select orange function of each key)" _helps="lock shift">SHIFT</BUTTON>
+      <BUTTON class="mkey" _key="s" _id="key-ms" _helpm="memory store to M" _helps="memory store to selected memory (A-F)">MS</BUTTON>
+      <BUTTON class="mkey" _key="r" _id="key-mr" _helpm="memory recall from M" _helps="memory recall from selected memory (A-F)">MR</BUTTON>
+      <BUTTON class="mkey del" _key="Backspace" _id="key-del" _helpm="delete last entry (key)" _helps="pops up a apge with help on AluCalc">DEL</BUTTON>
+      <BUTTON class="mkey clr" _key="Escape"  _id="key-clr" _helpm="clear pending computation" _helps="also clear all memories, input mode, width, display mode">C</BUTTON>
 
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
       <DIV class="skey">s&gt;&gt;#</DIV>
       <DIV class="skey">NXOR</DIV>
-      <BUTTON class="mkey" _key="d" _id="key-digd">D</BUTTON>
-      <BUTTON class="mkey" _key="e" _id="key-dige">E</BUTTON>
-      <BUTTON class="mkey" _key="f" _id="key-digf">F</BUTTON>
-      <BUTTON class="mkey" _key=";" _id="key-asr">s&gt;&gt;</BUTTON>
-      <BUTTON class="mkey" _key="x" _id="key-xor">XOR</BUTTON>
+      <BUTTON class="mkey" _key="d" _id="key-digd" _helpm="hexadecimal digit D" _helps="">D</BUTTON>
+      <BUTTON class="mkey" _key="e" _id="key-dige" _helpm="hexadecimal digit E" _helps="">E</BUTTON>
+      <BUTTON class="mkey" _key="f" _id="key-digf" _helpm="hexadecimal digit F" _helps="">F</BUTTON>
+      <BUTTON class="mkey" _key=";" _id="key-asr" _helpm="ASR (arithmetic shift to right, ie with sign extend) by one" _helps="ASR with selected amount">s&gt;&gt;</BUTTON>
+      <BUTTON class="mkey" _key="x" _id="key-xor" _helpm="XOR (bitwise exclusive OR)" _helps="bitwise inverse (NOT) of XOR">XOR</BUTTON>
 
-      <DIV class="skey">&#x21AA;C</DIV> <!-- right arrow with Hook -->
-      <DIV class="skey">&#x21AA;#</DIV>
-      <DIV class="skey">&#x21AA;</DIV>
+      <DIV class="skey">C&#x2942;</DIV> <!-- 2942 rightwards arrow above short leftwards arrow --> <!-- x21AA right arrow with Hook -->
+      <DIV class="skey">&#x2942;#</DIV>
+      <DIV class="skey">&#x2942;</DIV>
       <DIV class="skey">&gt;&gt;#</DIV>
       <DIV class="skey">NOR</DIV>
-      <BUTTON class="mkey" _key="a" _id="key-diga">A</BUTTON>
-      <BUTTON class="mkey" _key="b" _id="key-digb">B</BUTTON>
-      <BUTTON class="mkey" _key="c" _id="key-digc">C</BUTTON>
-      <BUTTON class="mkey" _key="." _id="key-lsr">&gt;&gt;</BUTTON>
-      <BUTTON class="mkey" _key="o" _id="key-or">OR</BUTTON>
+      <BUTTON class="mkey" _key="a" _id="key-diga" _helpm="hexadecimal digit A" _helps="rotate to the right by one through carry">A</BUTTON>
+      <BUTTON class="mkey" _key="b" _id="key-digb" _helpm="hexadecimal digit B" _helps="rotate to the right by selected amount">B</BUTTON>
+      <BUTTON class="mkey" _key="c" _id="key-digc" _helpm="hexadecimal digit C" _helps="rotate to the right by one">C</BUTTON>
+      <BUTTON class="mkey" _key="." _id="key-lsr" _helpm="LSR (logic shift to right, ie with 0 shifted in) by one" _helps="LSR with selected amount">&gt;&gt;</BUTTON>
+      <BUTTON class="mkey" _key="o" _id="key-or" _helpm="OR (bitwise OR)" _helps="bitwise inverse (NOT) of OR">OR</BUTTON>
 
-      <DIV class="skey">&#x21A9;C</DIV> <!-- left arrow with Hook -->
-      <DIV class="skey">&#x21A9;#</DIV>
-      <DIV class="skey">&#x21A9;</DIV>
+      <DIV class="skey">&#x2944;C</DIV> <!-- 2944 rightwards arrow above short leftwards arrow --> <!-- x21A9 left arrow with Hook -->
+      <DIV class="skey">&#x2944;#</DIV>
+      <DIV class="skey">&#x2944;</DIV>
       <DIV class="skey">&lt;&lt;#</DIV>
       <DIV class="skey">NAND</DIV>
-      <BUTTON class="mkey" _key="7" _id="key-dig7">7</BUTTON>
-      <BUTTON class="mkey" _key="8" _id="key-dig8">8</BUTTON>
-      <BUTTON class="mkey" _key="9" _id="key-dig9">9</BUTTON>
-      <BUTTON class="mkey" _key="," _id="key-lsl">&lt;&lt;</BUTTON>
-      <BUTTON class="mkey" _key="n" _id="key-and">AND</BUTTON>
+      <BUTTON class="mkey" _key="7" _id="key-dig7" _helpm="(hexa)decimal digit 7" _helps="rotate to the left by one through carry">7</BUTTON>
+      <BUTTON class="mkey" _key="8" _id="key-dig8" _helpm="(hexa)decimal digit 8" _helps="rotate to the left by selected amount">8</BUTTON>
+      <BUTTON class="mkey" _key="9" _id="key-dig9" _helpm="(hexa)decimal digit 9" _helps="rotate to the left by one">9</BUTTON>
+      <BUTTON class="mkey" _key="," _id="key-lsl" _helpm="LSL (logic shift to left, ie with 0 shifted in) by one" _helps="LSL with selected amount">&lt;&lt;</BUTTON>
+      <BUTTON class="mkey" _key="n" _id="key-and" _helpm="AND (exclusive bitwise AND)" _helps="bitwise inverse (NOT) of AND">AND</BUTTON>
 
       <DIV class="skey"></DIV>
       <DIV class="skey">NIMP</DIV>
       <DIV class="skey">IMP</DIV>
       <DIV class="skey">s×</DIV>
       <DIV class="skey">s÷</DIV>
-      <BUTTON class="mkey" _key="4" _id="key-dig4">4</BUTTON>
-      <BUTTON class="mkey" _key="5" _id="key-dig5">5</BUTTON>
-      <BUTTON class="mkey" _key="6" _id="key-dig6">6</BUTTON>
-      <BUTTON class="mkey" _key="\" _id="key-mul">×</BUTTON>
-      <BUTTON class="mkey" _key="/" _id="key-div">÷</BUTTON>
+      <BUTTON class="mkey" _key="4" _id="key-dig4" _helpm="(hexa)decimal digit 4" _helps="">4</BUTTON>
+      <BUTTON class="mkey" _key="5" _id="key-dig5" _helpm="(hexa)decimal digit 5" _helps="IMP (bitwise implication)">5</BUTTON>
+      <BUTTON class="mkey" _key="6" _id="key-dig6" _helpm="(hexa)decimal digit 6" _helps="bitwise inverse (NOT) of IMP">6</BUTTON>
+      <BUTTON class="mkey" _key="\" _id="key-mul" _helpm="multiplication" _helps="signed multiplication">×</BUTTON>
+      <BUTTON class="mkey" _key="/" _id="key-div" _helpm="division" _helps="signed division">÷</BUTTON>
 
-      <DIV class="skey">help</DIV>
+      <DIV class="skey"></DIV>
       <DIV class="skey">INC</DIV>
       <DIV class="skey">DEC</DIV>
       <DIV class="skey">+C</DIV>
       <DIV class="skey">−C</DIV>
-      <BUTTON class="mkey" _key="1" _id="key-dig1">1</BUTTON>
-      <BUTTON class="mkey" _key="2" _id="key-dig2">2</BUTTON>
-      <BUTTON class="mkey" _key="3" _id="key-dig3">3</BUTTON>
-      <BUTTON class="mkey" _key="=" _id="key-add">+</BUTTON>
-      <BUTTON class="mkey" _key="-" _id="key-sub">−</BUTTON>
+      <BUTTON class="mkey" _key="1" _id="key-dig1" _helpm="(hexa)decimal or binary digit 1" _helps="">1</BUTTON>
+      <BUTTON class="mkey" _key="2" _id="key-dig2" _helpm="(hexa)decimal digit 2" _helps="increment by one">2</BUTTON>
+      <BUTTON class="mkey" _key="3" _id="key-dig3" _helpm="(hexa)decimal digit 3" _helps="decrement by one">3</BUTTON>
+      <BUTTON class="mkey" _key="=" _id="key-add" _helpm="addition" _helps="addition with carry in">+</BUTTON>
+      <BUTTON class="mkey" _key="-" _id="key-sub" _helpm="subtraction" _helps="subtraction with borrow in">−</BUTTON>
 
       <DIV class="skey">width</DIV>
       <DIV class="skey">NOT</DIV>
       <DIV class="skey">B&lt;&gt;H</DIV>
       <DIV class="skey">SEC</DIV>
       <DIV class="skey">anser</DIV>
-      <BUTTON class="mkey" _key="0" _id="key-dig0">0</BUTTON>
-      <BUTTON class="mkey" _key="`" _id="key-sign">±</BUTTON>
-      <BUTTON class="mkey" _key="m" _id="key-mode">B&gt;H&gt;D</BUTTON>
-      <BUTTON class="mkey" _key="y" _id="key-carry">CLC</BUTTON>
-      <BUTTON class="mkey" _key="Enter" _id="key-exec" >=</BUTTON>
+      <BUTTON class="mkey" _key="0" _id="key-dig0" _helpm="(hexa)decimal or binary digit 0" _helps="loops through ALU widths">0</BUTTON>
+      <BUTTON class="mkey" _key="`" _id="key-sign" _helpm="2s complement" _helps="bitwise inverse (NOT)">±</BUTTON>
+      <BUTTON class="mkey" _key="m" _id="key-mode" _helpm="loop through input modes (binary, hexadecimal, decimal)" _helps="loop through display modes">B&gt;H&gt;D</BUTTON>
+      <BUTTON class="mkey" _key="y" _id="key-carry" _helpm="set carry flag" _helps="clear carry flag">CLC</BUTTON>
+      <BUTTON class="mkey" _key="Enter" _id="key-exec" _helpm="complete pending computation" _helps="show history of answers">=</BUTTON>
     </DIV>
 
   </BODY>
