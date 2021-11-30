@@ -45,8 +45,10 @@
         border: 2px solid black;
         border-radius: 10px;
       }
-      .mkey:hover { background-color: darkgrey; }
-      .mkey:active { background-color: green; }
+      
+      .mkey:hover { 
+        background-color: darkgrey; 
+      }
 
       .skey {
         margin-top: 4px;
@@ -61,13 +63,23 @@
         background-color: darkorange;
         border: 2px solid chocolate;
       }
-      .shift:hover { background-color: #FFB040; }
+      
+      .shift:hover { 
+        background-color: #FFB040; 
+      }
 
       .del, .clr{
         background-color: red;
         border: 2px solid firebrick;
       }
-      .del:hover, .clr:hover { background-color: #FF8080; }
+      
+      .del:hover, .clr:hover { 
+        background-color: #FF8080; 
+      }
+
+      .mkey:active { 
+        background-color: green; 
+      }
 
       .display, .lflags, .cflags, .rflags {
         display: grid;
@@ -112,6 +124,11 @@
         border-right: 2px solid black;
       }
 
+      .version {
+        font-size: 10px;
+        color: gainsboro;
+        margin: 6px;
+      }
     </STYLE>
 
     <SCRIPT>
@@ -255,5 +272,6 @@
       <BUTTON class="mkey" _key="Enter" _id="key-exec" _helpm="complete pending computation" _helps="show history of answers">=</BUTTON>
     </DIV>
 
+    <DIV class="version">v10 - 2021 nov 30</DIV>
   </BODY>
 </HTML>
