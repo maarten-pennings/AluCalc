@@ -137,7 +137,8 @@
         document.getElementsByTagName("body")[0].onkeydown = hotkeyhandler;
         var buttons = document.getElementsByTagName("button");
         help = "<TITLE>ALU calc HELP</TITLE><table>\n"
-        help += "  <tr><td><b>hotkey</b></td><b>primary function</b></td><td><b>secondary function</b></td></tr>\n"
+        help += "<META name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+        help += "  <tr><td><b>hotkey</b></td><td><b>primary function</b></td><td><b>secondary function</b></td></tr>\n"
         for( var ix=0; ix<buttons.length; ix++ ) {
           const but = buttons[ix];
           const but_id = but.getAttribute("_id");
@@ -177,7 +178,7 @@
       <DIV class="skey">MR#</DIV>
       <DIV class="skey" >help</DIV>
       <DIV class="skey">AC</DIV>
-      <BUTTON class="mkey shift" _key="z" _id="key-shift" _helpm="shift (select orange function of each key)" _helps="lock shift">SHIFT</BUTTON>
+      <BUTTON class="mkey shift" _key="z" _id="key-shift" _helpm="shift (select orange function of each key)" _helps="lock shift">&#8679;</BUTTON>
       <BUTTON class="mkey" _key="s" _id="key-ms" _helpm="memory store to M" _helps="memory store to selected memory (A-F)">MS</BUTTON>
       <BUTTON class="mkey" _key="r" _id="key-mr" _helpm="memory recall from M" _helps="memory recall from selected memory (A-F)">MR</BUTTON>
       <BUTTON class="mkey del" _key="Backspace" _id="key-del" _helpm="delete last entry (key)" _helps="pops up a apge with help on AluCalc">DEL</BUTTON>
@@ -240,12 +241,12 @@
 
       <DIV class="skey">width</DIV>
       <DIV class="skey">NOT</DIV>
-      <DIV class="skey">B&lt;&gt;H</DIV>
+      <DIV class="skey">BH</DIV>
       <DIV class="skey">SEC</DIV>
       <DIV class="skey">anser</DIV>
       <BUTTON class="mkey" _key="0" _id="key-dig0" _helpm="(hexa)decimal or binary digit 0" _helps="loops through ALU widths">0</BUTTON>
       <BUTTON class="mkey" _key="`" _id="key-sign" _helpm="2s complement" _helps="bitwise inverse (NOT)">±</BUTTON>
-      <BUTTON class="mkey" _key="m" _id="key-mode" _helpm="loop through input modes (binary, hexadecimal, decimal)" _helps="loop through display modes">B&gt;H&gt;D</BUTTON>
+      <BUTTON class="mkey" _key="m" _id="key-mode" _helpm="loop through input modes (binary, hexadecimal, decimal)" _helps="loop through display modes">BHD</BUTTON>
       <BUTTON class="mkey" _key="y" _id="key-carry" _helpm="set carry flag" _helps="clear carry flag">CLC</BUTTON>
       <BUTTON class="mkey" _key="Enter" _id="key-exec" _helpm="complete pending computation" _helps="show history of answers">=</BUTTON>
     </DIV>
