@@ -46,10 +46,6 @@
         border-radius: 10px;
       }
       
-      .mkey:hover { 
-        background-color: darkgrey; 
-      }
-
       .skey {
         margin-top: 4px;
         margin-bottom: 0px;
@@ -64,19 +60,23 @@
         border: 2px solid chocolate;
       }
       
-      .shift:hover { 
-        background-color: #FFB040; 
-      }
-
-      .del, .clr{
+      .del,.clr{
         background-color: red;
         border: 2px solid firebrick;
       }
       
-      .del:hover, .clr:hover { 
-        background-color: #FF8080; 
+      @media (hover: hover){
+        .mkey:hover { 
+          background-color: darkgrey; 
+        }
+        .shift:hover { 
+          background-color: #FFB040; 
+        }
+        .del:hover,.clr:hover { 
+          background-color: #FF8080; 
+        }
       }
-
+      
       .mkey:active { 
         background-color: green; 
       }
@@ -110,6 +110,7 @@
         padding: 3px;
         font-weight: 600;
         font-size: 12px;
+        height: 2.5ex;
 
         border-top: 2px solid black;
       }
@@ -132,15 +133,77 @@
     </STYLE>
 
     <SCRIPT>
+      const phase_answer = "answer"
+      const phase_reg1 = "x"
+      const phase_op = "op"
+      const phase_reg2 = "y"
+      
+      // Note: unary operators are applied immediately; they don't change phase
+      const op_none = ""
+      const op_or = "OR"
+      const op_nor = "NOR"
+      const op_and = "AND"
+      const op_nand = "NAND"
+      const op_ror = "ROR"
+      const op_asr = "LSR"
+      const op_lsr = "ASR"
+      const op_rol = "ROL"
+      const op_lsl = "LSL"
+      const op_nxor = "NXOR"
+      const op_xor = "XOR"
+      const op_nimp = "NIMP"
+      const op_imp = "IMP"
+      const op_smul = "s×"
+      const op_mul = "×"
+      const op_sdiv = "s÷"
+      const op_div = "÷"
+      const op_addc = "+ C"
+      const op_add = "+"
+      const op_subc = "− C"
+      const op_sub = "−"
+      
+      const shift_no = ""
+      const shift_yes = "&#8679;"
+      const shift_lock = "&#8679; LOCK"
+
       var help
 
+      var state = {
+        'phase' : phase_answer,
+        'shift' : shift_no,
+        'reg1'  : 0,
+        'op'    : op_none,
+        'reg2'  : 0,
+        mems    : { 'm':0, 'a':0, 'b':0, 'c':0, 'd':0, 'e':0, 'f':0 }, 
+      }
+        
+      function lcd() {
+        var elem_lcd_flag_shift = document.getElementById('lcd_flag_shift');
+        var elem_lcd_flag_phase = document.getElementById('lcd_flag_phase');
+        var elem_lcd_flag_width = document.getElementById('lcd_flag_width');
+        var elem_lcd_flag_mems = document.getElementById('lcd_flag_mems');
+        var elem_lcd_flag_cpuflags = document.getElementById('lcd_flag_cpuflags');
+        
+        elem_lcd_flag_shift.innerHTML = state.shift
+        if( state.phase == phase_op ) { elem_lcd_flag_phase.innerHTML = state.op } else  { elem_lcd_flag_phase.innerHTML = state.phase }
+        
+        var mems="";
+        for(var key in state.mems ) if( state.mems[key]!=0 ) mems += key+" ";
+        elem_lcd_flag_mems.innerHTML = mems
+      }
+      
       function hit(label) {
-        var elem = document.getElementById('flag_op');
-        elem.innerHTML = label
-        if( label=="key-del" ) {
+        document.getElementById('lcd_flag_width').innerHTML = label
+        if( label=="key-shift" ) {
+          if( state.shift==shift_no ) state.shift=shift_yes
+          else if ( state.shift==shift_yes ) state.shift=shift_lock
+          else state.shift=shift_no
+        } else if( state.shift!=shift_no && label=="key-del" ) {
           var win = window.open("", "ALU calc help" );
           win.document.body.innerHTML = help;
         }
+        if( label!="key-shift" && state.shift==shift_yes ) state.shift=shift_no
+        lcd()
       }
 
       function hotkeyhandler(event) {
@@ -175,6 +238,7 @@
         }
         help += "</table>\n"
         help += "<b>Note</b>: hotkeys are unshifted on PC keyboard</b>\n" 
+        lcd()
       }
 
       window.onload = main;
@@ -186,57 +250,57 @@
 
     <DIV class="keys_grid">
 
-      <DIV class="lflags" id="flag_shift">&#8679; LOCK</DIV>
-      <DIV class="cflags" id="flag_op">op</DIV>
-      <DIV class="cflags" id="flag_width">8 bit</DIV>
-      <DIV class="cflags" id="flag_mems">M ABCDEF</DIV>
-      <DIV class="rflags" id="flag_cpuflags">O C Z N P</DIV>
+      <DIV class="lflags" id="lcd_flag_shift">&#8679; LOCK</DIV>
+      <DIV class="cflags" id="lcd_flag_phase">phase</DIV>
+      <DIV class="cflags" id="lcd_flag_width">8 bit</DIV>
+      <DIV class="cflags" id="lcd_flag_mems">M ABCDEF</DIV>
+      <DIV class="rflags" id="lcd_flag_cpuflags">O C Z N P</DIV>
 
-      <DIV class="display">FFFF 1893</DIV>
+      <DIV class="display" id="lcd_main">FFFF 1893</DIV>
 
       <DIV class="skey">lock</DIV>
-      <DIV class="skey">MS#</DIV>
-      <DIV class="skey">MR#</DIV>
+      <DIV class="skey">MS #</DIV>
+      <DIV class="skey">MR #</DIV>
       <DIV class="skey" >help</DIV>
       <DIV class="skey">AC</DIV>
       <BUTTON class="mkey shift" _key="z" _id="key-shift" _helpm="shift (select orange function of each key)" _helps="lock shift">&#8679;</BUTTON>
       <BUTTON class="mkey" _key="s" _id="key-ms" _helpm="memory store to M" _helps="memory store to selected memory (A-F)">MS</BUTTON>
       <BUTTON class="mkey" _key="r" _id="key-mr" _helpm="memory recall from M" _helps="memory recall from selected memory (A-F)">MR</BUTTON>
-      <BUTTON class="mkey del" _key="Backspace" _id="key-del" _helpm="delete last entry (key)" _helps="pops up a apge with help on AluCalc">DEL</BUTTON>
+      <BUTTON class="mkey del" _key="Backspace" _id="key-del" _helpm="delete last entry (key)" _helps="pops up a page with help on AluCalc">DEL</BUTTON>
       <BUTTON class="mkey clr" _key="Escape"  _id="key-clr" _helpm="clear pending computation" _helps="also clear all memories, input mode, width, display mode">C</BUTTON>
 
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
-      <DIV class="skey">s&gt;&gt;#</DIV>
-      <DIV class="skey">NXOR</DIV>
+      <DIV class="skey">NOR</DIV>
+      <DIV class="skey">NAND</DIV>
       <BUTTON class="mkey" _key="d" _id="key-digd" _helpm="hexadecimal digit D" _helps="">D</BUTTON>
       <BUTTON class="mkey" _key="e" _id="key-dige" _helpm="hexadecimal digit E" _helps="">E</BUTTON>
       <BUTTON class="mkey" _key="f" _id="key-digf" _helpm="hexadecimal digit F" _helps="">F</BUTTON>
-      <BUTTON class="mkey" _key=";" _id="key-asr" _helpm="ASR (arithmetic shift to right, ie with sign extend) by one" _helps="ASR with selected amount">s&gt;&gt;</BUTTON>
-      <BUTTON class="mkey" _key="x" _id="key-xor" _helpm="XOR (bitwise exclusive OR)" _helps="bitwise inverse (NOT) of XOR">XOR</BUTTON>
+      <BUTTON class="mkey" _key="o" _id="key-or" _helpm="OR (bitwise OR)" _helps="bitwise inverse (NOT) of OR">OR</BUTTON>
+      <BUTTON class="mkey" _key="n" _id="key-and" _helpm="AND (exclusive bitwise AND)" _helps="bitwise inverse (NOT) of AND">AND</BUTTON>
 
-      <DIV class="skey">C&#x2942;</DIV> <!-- 2942 rightwards arrow above short leftwards arrow --> <!-- x21AA right arrow with Hook -->
-      <DIV class="skey">&#x2942;#</DIV>
-      <DIV class="skey">&#x2942;</DIV>
-      <DIV class="skey">&gt;&gt;#</DIV>
-      <DIV class="skey">NOR</DIV>
+      <DIV class="skey">ROR C</DIV>
+      <DIV class="skey">ROR #</DIV>
+      <DIV class="skey">ROR</DIV>
+      <DIV class="skey">LSR #</DIV>
+      <DIV class="skey">ASR #</DIV>
       <BUTTON class="mkey" _key="a" _id="key-diga" _helpm="hexadecimal digit A" _helps="rotate to the right by one through carry">A</BUTTON>
       <BUTTON class="mkey" _key="b" _id="key-digb" _helpm="hexadecimal digit B" _helps="rotate to the right by selected amount">B</BUTTON>
       <BUTTON class="mkey" _key="c" _id="key-digc" _helpm="hexadecimal digit C" _helps="rotate to the right by one">C</BUTTON>
-      <BUTTON class="mkey" _key="." _id="key-lsr" _helpm="LSR (logic shift to right, ie with 0 shifted in) by one" _helps="LSR with selected amount">&gt;&gt;</BUTTON>
-      <BUTTON class="mkey" _key="o" _id="key-or" _helpm="OR (bitwise OR)" _helps="bitwise inverse (NOT) of OR">OR</BUTTON>
+      <BUTTON class="mkey" _key="." _id="key-lsr" _helpm="LSR (logic shift to right, ie with 0 shifted in) by one" _helps="LSR with selected amount">LSR</BUTTON>
+      <BUTTON class="mkey" _key=";" _id="key-asr" _helpm="ASR (arithmetic shift to right, ie with sign extend) by one" _helps="ASR with selected amount">ASR</BUTTON>
 
-      <DIV class="skey">&#x2944;C</DIV> <!-- 2944 rightwards arrow above short leftwards arrow --> <!-- x21A9 left arrow with Hook -->
-      <DIV class="skey">&#x2944;#</DIV>
-      <DIV class="skey">&#x2944;</DIV>
-      <DIV class="skey">&lt;&lt;#</DIV>
-      <DIV class="skey">NAND</DIV>
+      <DIV class="skey">ROL C</DIV>
+      <DIV class="skey">ROL #</DIV>
+      <DIV class="skey">ROL</DIV>
+      <DIV class="skey">LSL #</DIV>
+      <DIV class="skey">NXOR</DIV>
       <BUTTON class="mkey" _key="7" _id="key-dig7" _helpm="(hexa)decimal digit 7" _helps="rotate to the left by one through carry">7</BUTTON>
       <BUTTON class="mkey" _key="8" _id="key-dig8" _helpm="(hexa)decimal digit 8" _helps="rotate to the left by selected amount">8</BUTTON>
       <BUTTON class="mkey" _key="9" _id="key-dig9" _helpm="(hexa)decimal digit 9" _helps="rotate to the left by one">9</BUTTON>
-      <BUTTON class="mkey" _key="," _id="key-lsl" _helpm="LSL (logic shift to left, ie with 0 shifted in) by one" _helps="LSL with selected amount">&lt;&lt;</BUTTON>
-      <BUTTON class="mkey" _key="n" _id="key-and" _helpm="AND (exclusive bitwise AND)" _helps="bitwise inverse (NOT) of AND">AND</BUTTON>
+      <BUTTON class="mkey" _key="," _id="key-lsl" _helpm="LSL (logic shift to left, ie with 0 shifted in) by one" _helps="LSL with selected amount">LSL</BUTTON>
+      <BUTTON class="mkey" _key="x" _id="key-xor" _helpm="XOR (bitwise exclusive OR)" _helps="bitwise inverse (NOT) of XOR">XOR</BUTTON>
 
       <DIV class="skey"></DIV>
       <DIV class="skey">NIMP</DIV>
@@ -252,8 +316,8 @@
       <DIV class="skey"></DIV>
       <DIV class="skey">INC</DIV>
       <DIV class="skey">DEC</DIV>
-      <DIV class="skey">+C</DIV>
-      <DIV class="skey">−C</DIV>
+      <DIV class="skey">+ C</DIV>
+      <DIV class="skey">− C</DIV>
       <BUTTON class="mkey" _key="1" _id="key-dig1" _helpm="(hexa)decimal or binary digit 1" _helps="">1</BUTTON>
       <BUTTON class="mkey" _key="2" _id="key-dig2" _helpm="(hexa)decimal digit 2" _helps="increment by one">2</BUTTON>
       <BUTTON class="mkey" _key="3" _id="key-dig3" _helpm="(hexa)decimal digit 3" _helps="decrement by one">3</BUTTON>
@@ -272,6 +336,6 @@
       <BUTTON class="mkey" _key="Enter" _id="key-exec" _helpm="complete pending computation" _helps="show history of answers">=</BUTTON>
     </DIV>
 
-    <DIV class="version">v10 - 2021 nov 30</DIV>
+    <DIV class="version">v11 - 2021 dec 6</DIV>
   </BODY>
 </HTML>
