@@ -352,7 +352,7 @@
           if( state.phase==phase_answer )    { /* skip */ }
           else if( state.phase==phase_reg1 ) { if( state.reg1==0 ) state.phase=phase_answer; else state.reg1=state.reg1>>4 } // todo input mode is fixed to hex
           else if( state.phase==phase_op )   { /* erase op */ state.phase=phase_reg1 }
-          else if( state.phase==phase_reg2 ) { if( state.teg2==0 ) state.phase=phase_op;     else state.reg2=state.reg2>>4 } // todo input mode is fixed to hex
+          else if( state.phase==phase_reg2 ) { if( state.reg2==0 ) state.phase=phase_op;     else state.reg2=state.reg2>>4 } // todo input mode is fixed to hex
           else { alert('execfun: unknown state.phase') }
         }
         else if( fun=="fun-sec" ) {
@@ -622,6 +622,6 @@
       <BUTTON class="mkey" _key="Enter" _funm="fun-equals" _funs="" _helpm="complete pending computation" _helps="">=</BUTTON>
     </DIV>
 
-    <DIV class="version">v12 - 2021 dec 11</DIV>
+    <DIV class="version">v12d - 2021 dec 11</DIV>
   </BODY>
 </HTML>
