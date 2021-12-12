@@ -10,7 +10,9 @@
 
 
     <!-- <LINK rel="stylesheet" href="style.css"> -->
-
+    <!-- see https://learnabout-electronics.org/Digital/dig58.php -->
+    <!-- see http://www.ee.unb.ca/cgi-bin/tervo/alu.pl -->
+    
     <TITLE>ALU calc</TITLE>
 
     <STYLE>
@@ -94,7 +96,7 @@
         margin: 0px 6px 8px 6px;
 
         padding: 10px 4px 6px 4px;
-        font-weight: 600;
+        font-weight: 900;
         font-size: 32px;
 
         border-left: 2px solid black;
@@ -107,8 +109,8 @@
         margin-top: 4px 0px 0px 0px;
 
         padding: 3px;
-        font-weight: 600;
-        font-size: 12px;
+        font-weight: 900;
+        font-size: 13px;
         height: 2.5ex;
 
         border-top: 2px solid black;
@@ -176,28 +178,57 @@
         state.reg2 = null
         state.bit_o = 0 // other bits are determined by refresh_lcd()
         state.bit_c = 0
-        // also clear all memories, input mode, width, display mode
+        // also clear all memories, radix, width
         if( all ) {
-          state.mems = { 'm':0, 'a':0, 'b':0, 'c':0, 'd':0, 'e':0, 'f':0 }
-          state.width= 16
+          state.mems = { 'M':0, 'A':0, 'B':0, 'C':0, 'D':0, 'E':0, 'F':0 }
+          state.width = 16
+          state.radix = 16
         }
       }
 
-      // A unary operator is executed (not, inc, add digit), update the phase
+      function radix2str(radix) {
+        if( radix== 2 ) return "bin"
+        if( radix==10 ) return "dec"
+        if( radix==16 ) return "hex"
+        alert('radix2str: unknown radix')
+        return "err"
+      }
+      
+      Number.prototype.toLcd = function () {
+        return this.toString(state.radix).toUpperCase()
+      };
+
+      // A digit is entered (0-F), update the phase
+      function digit_update_phase() {
+        if( state.phase==phase_answer ) {
+          state.phase = phase_reg1 
+          state.reg1 = 0 // start with empty reg1
+        } else if( state.phase==phase_reg1 ) {
+          // continue with reg1
+        } else if( state.phase==phase_op ) {
+          state.phase = phase_reg2
+          state.reg2 = 0 // start with empty reg2
+        } else if( state.phase==phase_reg2 ) {
+          // continue with reg2
+        } else {
+          alert('unop_update_phase: unknown state.phase')
+        }
+      }
+
+      // A unary operator is entered (not, inc, add digit), update the phase
       function unop_update_phase() {
-          if( state.phase==phase_answer ) {
-            state.phase = phase_reg1
-            state.reg1 = 0
-          } else if( state.phase==phase_reg1 ) {
-            // continue
-          } else if( state.phase==phase_op ) {
-            state.phase = phase_reg2
-            state.reg2 = 0
-          } else if( state.phase==phase_reg2 ) {
-            // continue
-          } else {
-            alert('unop_update_phase: unknown state.phase')
-          }
+        if( state.phase==phase_answer ) {
+          state.phase = phase_reg1 // reg1 filled with answer
+        } else if( state.phase==phase_reg1 ) {
+          // continue with reg1
+        } else if( state.phase==phase_op ) {
+          state.phase = phase_reg2
+          state.reg2 = state.reg1 // reg1 is on the display, take that as reg2
+        } else if( state.phase==phase_reg2 ) {
+          // continue with reg2
+        } else {
+          alert('unop_update_phase: unknown state.phase')
+        }
       }
 
       function clip2width(val) {
@@ -220,38 +251,45 @@
       
       // Compute reg1 op reg2 into reg 1
       function eval_binop() {
-        val1 = clip2width(state.reg1)
-        val2 = clip2width(state.reg2)
-        if(      state.op == op_add  ) state.reg1 = clip2width( val1 + val2 )
-        else if( state.op == op_addc ) state.reg1 = clip2width( val1 + val2 + state.bit_c )
-        else if( state.op == op_and  ) state.reg1 = clip2width( val1 & val2 )
-        //else if( state.op == op_asr  ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_div  ) state.reg1 = clip2width( val1 + val2 )
-        else if( state.op == op_imp  ) state.reg1 = clip2width( ~val1 | val2 ) 
-        //else if( state.op == op_lsl  ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_lsr  ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_mul  ) state.reg1 = clip2width( val1 + val2 )
-        else if( state.op == op_nand ) state.reg1 = clip2width( ~(val1 & val2) )
-        else if( state.op == op_nimp ) state.reg1 = clip2width( ~( ~val1 | val2 ) )
-        else if( state.op == op_nor  ) state.reg1 = clip2width( ~(val1 | val2) )
-        else if( state.op == op_nxor ) state.reg1 = clip2width( ~(val1 ^ val2) )
-        else if( state.op == op_or   ) state.reg1 = clip2width( val1 | val2 )
-        //else if( state.op == op_rol  ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_ror  ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_sdiv ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_smul ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_subc ) state.reg1 = clip2width( val1 + val2 )
-        //else if( state.op == op_sub  ) state.reg1 = clip2width( val1 + val2 )
-        else if( state.op == op_xor  ) state.reg1 = clip2width( val1 ^ val2 )
+        const val1 = clip2width(state.reg1)
+        const val2 = clip2width(state.reg2)
+        var   res
+        if(      state.op == op_add  ) res = val1 + val2
+        else if( state.op == op_addc ) res = val1 + val2 + state.bit_c
+        else if( state.op == op_and  ) res = val1 & val2
+      //else if( state.op == op_asr  ) res = val1 op val2
+      //else if( state.op == op_div  ) res = val1 op val2
+        else if( state.op == op_imp  ) res = ~val1 | val2
+      //else if( state.op == op_lsl  ) res = val1 op val2
+      //else if( state.op == op_lsr  ) res = val1 op val2
+      //else if( state.op == op_mul  ) res = val1 op val2
+        else if( state.op == op_nand ) res = ~(val1 & val2)
+        else if( state.op == op_nimp ) res = ~( ~val1 | val2 )
+        else if( state.op == op_nor  ) res = ~(val1 | val2)
+        else if( state.op == op_nxor ) res = ~(val1 ^ val2)
+        else if( state.op == op_or   ) res = val1 | val2
+      //else if( state.op == op_rol  ) res = val1 op val2
+      //else if( state.op == op_ror  ) res = val1 op val2
+      //else if( state.op == op_sdiv ) res = val1 op val2
+      //else if( state.op == op_smul ) res = val1 op val2
+      //else if( state.op == op_subc ) res = val1 op val2
+        else if( state.op == op_sub  ) { const mval2 = clip2width(bitflip(val2)+1); res = val1 + mval2 } // todo carry not ok: 3-2
+        else if( state.op == op_xor  ) res = val1 ^ val2
         else alert('eval_binop: unknown '+state.op)
-        state.op = null
+        
+        state.bit_c = res >= (1<<state.width)
+        state.reg1 = clip2width(res)
+        console.log( "eval_binop:", val1.toLcd(), state.op, val2.toLcd(), "=", state.bit_c?1:0, state.reg1.toLcd() )
+
         state.phase = phase_answer
+        state.op = null
+        state.reg2 = null
       }
 
       function refresh_lcd() {
         const elem_lcd_flag_shift = document.getElementById('lcd_flag_shift');
         const elem_lcd_flag_phase = document.getElementById('lcd_flag_phase');
-        const elem_lcd_flag_width = document.getElementById('lcd_flag_width');
+        const elem_lcd_flag_modes = document.getElementById('lcd_flag_modes');
         const elem_lcd_flag_mems = document.getElementById('lcd_flag_mems');
         const elem_lcd_flag_cpuflags = document.getElementById('lcd_flag_cpuflags');
         const elem_lcd_main = document.getElementById('lcd_main');
@@ -266,7 +304,6 @@
 
         const umax = 1 << state.width
         const smax = umax/2
-
         const reg = state.phase==phase_reg2 ? state.reg2 : state.reg1
         const flag_o = state.bit_o && state.phase==phase_answer ? "O&nbsp;" : "&nbsp;&nbsp;"
         const flag_c = state.bit_c ? "C&nbsp;" : "&nbsp;&nbsp;"
@@ -276,7 +313,7 @@
 
         elem_lcd_flag_shift.innerHTML = state.shift
         elem_lcd_flag_phase.innerHTML = phase
-        elem_lcd_flag_width.innerHTML = state.width
+        elem_lcd_flag_modes.innerHTML = state.width+"bit "+radix2str(state.radix)
         elem_lcd_flag_mems.innerHTML = mems
         elem_lcd_flag_cpuflags.innerHTML = flag_o+flag_c+flag_z+flag_n+flag_p
 
@@ -338,11 +375,8 @@
         const smax = umax/2
         const digit = fun2digit(fun)
         const op= fun2op(fun)
-        // dispatch fun
-        if( fun=="fun-help" ) {
-          window.open("", "ALU calc help" ).document.body.innerHTML = help
-        }
-        else if( fun=="fun-clr" ) {
+        // Dispatch fun
+        if( fun=="fun-clr" ) {
           state_clear(false)
         }
         else if( fun=="fun-allclr" ) {
@@ -355,16 +389,33 @@
           else if( state.phase==phase_reg2 ) { if( state.reg2==0 ) state.phase=phase_op;     else state.reg2=state.reg2>>4 } // todo input mode is fixed to hex
           else { alert('execfun: unknown state.phase') }
         }
-        else if( fun=="fun-sec" ) {
-          state.bit_c = 1
-        }
-        else if( fun=="fun-clc" ) {
-          state.bit_c = 0
-        }
         else if( digit!=null ) {
-          unop_update_phase()
+          digit_update_phase()
           if( state.phase==phase_reg1 ) state.reg1 = state.reg1*16+digit
           if( state.phase==phase_reg2 ) state.reg2 = state.reg2*16+digit
+        }
+        else if( op!=null ) {
+          if( state.phase==phase_reg2 ) eval_binop() // compute reg1 op reg2 into reg 1, cascade
+          state.phase = phase_op
+          state.op = op
+        }
+        else if( fun=="fun-equals" ) {
+          if( state.phase==phase_answer )    { /* skip */ }
+          else if( state.phase==phase_reg1 ) { /* normalize reg1 */ state.phase=phase_answer; state.reg1=clip2width(state.reg1) }
+          else if( state.phase==phase_op )   { /* use reg1 also for reg2 */ state.reg2=state.reg1; eval_binop(op) }
+          else if( state.phase==phase_reg2 ) { /* normal computation */ eval_binop(op) }
+          else { alert('execfun: unknown state.phase') }
+        }
+        // Choice: unop's do not change carry (unless it is a core part of the function: ROLC)
+        else if( fun=="fun-not" ) {
+          unop_update_phase()
+          if( state.phase==phase_reg1 ) state.reg1 = bitflip( state.reg1 )
+          if( state.phase==phase_reg2 ) state.reg2 = bitflip( state.reg2 )
+        }
+        else if( fun=="fun-sign" ) {
+          unop_update_phase()
+          if( state.phase==phase_reg1 ) state.reg1 = clip2width( bitflip( state.reg1 ) + 1 )
+          if( state.phase==phase_reg2 ) state.reg2 = clip2width( bitflip( state.reg2 ) + 1 )
         }
         else if( fun=="fun-inc" ) {
           unop_update_phase()
@@ -375,16 +426,6 @@
           unop_update_phase()
           if( state.phase==phase_reg1 ) state.reg1 = state.reg1==0 ? (1<<state.width)-1 : state.reg1-1
           if( state.phase==phase_reg2 ) state.reg2 = state.reg2==0 ? (1<<state.width)-1 : state.reg2-1
-        }
-        else if( fun=="fun-not" ) {
-          unop_update_phase()
-          if( state.phase==phase_reg1 ) state.reg1 = bitflip( state.reg1 )
-          if( state.phase==phase_reg2 ) state.reg2 = bitflip( state.reg2 )
-        }
-        else if( fun=="fun-sign" ) {
-          unop_update_phase()
-          if( state.phase==phase_reg1 ) state.reg1 = bitflip( state.reg1 ) + 1
-          if( state.phase==phase_reg2 ) state.reg2 = bitflip( state.reg2 ) + 1
         }
         else if( fun=="fun-asr" ) {
           unop_update_phase()
@@ -421,33 +462,33 @@
           if( state.phase==phase_reg1 ) { const v=(state.reg1<<1)+state.bit_c; state.bit_c=v>=umax; state.reg1=clip2width(v); } 
           if( state.phase==phase_reg2 ) { const v=(state.reg2<<1)+state.bit_c; state.bit_c=v>=umax; state.reg2=clip2width(v); }
         }
+        else if( fun=="fun-popc" ) {
+          unop_update_phase()
+          if( state.phase==phase_reg1 ) { state.reg1 = popcount(state.reg1) } 
+          if( state.phase==phase_reg2 ) { state.reg2 = popcount(state.reg2) }
+        }
+        // Specials
+        else if( fun=="fun-sec" ) {
+          state.bit_c = 1
+        }
+        else if( fun=="fun-clc" ) {
+          state.bit_c = 0
+        }
         else if( fun=="fun-ms" ) {
           unop_update_phase()
-          if( state.phase==phase_reg1 ) state.mems.m = state.reg1
-          if( state.phase==phase_reg2 ) state.mems.m = state.reg2
+          if( state.phase==phase_reg1 ) state.mems.M = state.reg1
+          if( state.phase==phase_reg2 ) state.mems.M = state.reg2
+        }
+        else if( fun=="fun-mr" ) {
+          unop_update_phase()
+          if( state.phase==phase_reg1 ) state.reg1 = state.mems.M
+          if( state.phase==phase_reg2 ) state.reg2 = state.mems.M
         }
         else if( fun=="fun-ms#" ) {
           alert("'MS #' not yet implemented") // todo
         }
         else if( fun=="fun-mr#" ) {
           alert("'MR #' not yet implemented") // todo
-        }
-        else if( fun=="fun-mr" ) {
-          unop_update_phase()
-          if( state.phase==phase_reg1 ) state.reg1 = state.mems.m
-          if( state.phase==phase_reg2 ) state.reg2 = state.mems.m
-        }
-        else if( op!=null ) {
-          if( state.phase==phase_reg2 ) eval_binop() // compute reg1 op reg2 into reg 1, cascade
-          state.phase = phase_op
-          state.op = op
-        }
-        else if( fun=="fun-equals" ) {
-          if( state.phase==phase_answer )    { /* skip */ }
-          else if( state.phase==phase_reg1 ) { /* normalize reg1 */ state.phase=phase_answer; state.reg1=clip2width(state.reg1) }
-          else if( state.phase==phase_op )   { /* use reg1 also for reg2 */ state.reg2=state.reg1; eval_binop(op) }
-          else if( state.phase==phase_reg2 ) { /* normal computation */ eval_binop(op) }
-          else { alert('execfun: unknown state.phase') }
         }
         else if( fun=="fun-bh" ) {
           alert("'BH' not yet implemented") // todo
@@ -457,6 +498,9 @@
         }
         else if( fun=="fun-width" ) {
           alert("'width' not yet implemented") // todo
+        }
+        else if( fun=="fun-help" ) {
+          window.open("", "ALU calc help" ).document.body.innerHTML = help
         }
         else {
           alert("fatal: '"+fun+"' not known")
@@ -538,7 +582,7 @@
 
       <DIV class="lflags" id="lcd_flag_shift">&#8679; LOCK</DIV>
       <DIV class="cflags" id="lcd_flag_phase">phase</DIV>
-      <DIV class="cflags" id="lcd_flag_width">8 bit</DIV>
+      <DIV class="cflags" id="lcd_flag_modes">8 bit</DIV>
       <DIV class="cflags" id="lcd_flag_mems">M ABCDEF</DIV>
       <DIV class="rflags" id="lcd_flag_cpuflags">O C Z N</DIV>
 
@@ -553,7 +597,7 @@
       <BUTTON class="mkey"       _key="s"         _funm="fun-ms"    _funs="fun-ms#" _helpm="memory store to M" _helps="memory store to selected memory (A-F)">MS</BUTTON>
       <BUTTON class="mkey"       _key="r"         _funm="fun-mr"    _funs="fun-mr#" _helpm="memory recall from M" _helps="memory recall from selected memory (A-F)">MR</BUTTON>
       <BUTTON class="mkey del"   _key="Backspace" _funm="fun-del"   _funs="fun-help" _helpm="delete last entry (key)" _helps="pops up a page with help on AluCalc">DEL</BUTTON>
-      <BUTTON class="mkey clr"   _key="Escape"    _funm="fun-clr"   _funs="fun-allclr" _helpm="clear pending computation" _helps="also clear all memories, input mode, width, display mode">C</BUTTON>
+      <BUTTON class="mkey clr"   _key="Escape"    _funm="fun-clr"   _funs="fun-allclr" _helpm="clear pending computation" _helps="also clear all memories, radix, width">C</BUTTON>
 
       <DIV class="skey"></DIV>
       <DIV class="skey"></DIV>
@@ -599,12 +643,12 @@
       <BUTTON class="mkey" _key="\" _funm="fun-mul"  _funs="fun-smul" _helpm="multiplication" _helps="signed multiplication">×</BUTTON>
       <BUTTON class="mkey" _key="/" _funm="fun-div"  _funs="fun-sdiv" _helpm="division" _helps="signed division">÷</BUTTON>
 
-      <DIV class="skey"></DIV>
+      <DIV class="skey">POPC</DIV>
       <DIV class="skey">INC</DIV>
       <DIV class="skey">DEC</DIV>
       <DIV class="skey">+ C</DIV>
       <DIV class="skey">− C</DIV>
-      <BUTTON class="mkey" _key="1" _funm="fun-dig1" _funs="" _helpm="(hexa)decimal or binary digit 1" _helps="">1</BUTTON>
+      <BUTTON class="mkey" _key="1" _funm="fun-dig1" _funs="fun-popc" _helpm="(hexa)decimal or binary digit 1" _helps="population count (number of 1 bits)">1</BUTTON>
       <BUTTON class="mkey" _key="2" _funm="fun-dig2" _funs="fun-inc" _helpm="(hexa)decimal digit 2" _helps="increment by one">2</BUTTON>
       <BUTTON class="mkey" _key="3" _funm="fun-dig3" _funs="fun-dec" _helpm="(hexa)decimal digit 3" _helps="decrement by one">3</BUTTON>
       <BUTTON class="mkey" _key="=" _funm="fun-add"  _funs="fun-addc" _helpm="addition" _helps="addition with carry in">+</BUTTON>
@@ -622,6 +666,6 @@
       <BUTTON class="mkey" _key="Enter" _funm="fun-equals" _funs="" _helpm="complete pending computation" _helps="">=</BUTTON>
     </DIV>
 
-    <DIV class="version">v12d - 2021 dec 11</DIV>
+    <DIV class="version">v13 - 2021 dec 12</DIV>
   </BODY>
 </HTML>
